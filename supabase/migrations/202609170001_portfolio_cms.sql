@@ -10,7 +10,7 @@ create table if not exists public.site_settings (
   id smallint primary key default 1 check (id = 1),
   name text not null default 'Purushottam',
   role text not null default 'Full-Stack Web Developer',
-  email text not null default 'your-email@example.com',
+  email text not null default 'purusottamsingh238@gmail.com',
   phone text not null default 'Add from Admin',
   location text not null default 'India',
   availability text not null default 'Available for selected projects',

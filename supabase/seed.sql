@@ -7,7 +7,7 @@ insert into public.site_settings (
   1,
   'Purushottam',
   'Full-Stack Web Developer',
-  'your-email@example.com',
+  'purusottamsingh238@gmail.com',
   'Add from Admin',
   'India',
   'Available for selected projects',
@@ -370,7 +370,7 @@ insert into public.achievements (label, value, suffix, display_order) values
 insert into public.social_links (platform, url, published, display_order) values
   ('GitHub', '#contact', true, 1),
   ('LinkedIn', '#contact', true, 2),
-  ('Email', 'mailto:your-email@example.com', true, 3),
+  ('Email', 'mailto:purusottamsingh238@gmail.com', true, 3),
   ('WhatsApp', '#contact', true, 4);
 
 insert into public.navigation_items (label, href, published, display_order) values

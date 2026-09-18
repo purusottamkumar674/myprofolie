@@ -38,11 +38,12 @@ type SettingsRow = {
 function mapSettings(row?: SettingsRow | null): SiteSettings {
   const base = fallbackData.settings;
   if (!row) return base;
+  const email = row.email && row.email !== "your-email@example.com" ? row.email : base.email;
 
   return {
     name: row.name || base.name,
     role: row.role || base.role,
-    email: row.email || base.email,
+    email,
     phone: row.phone || base.phone,
     location: row.location || base.location,
     availability: row.availability || base.availability,
@@ -82,9 +83,13 @@ function mergeMissingRows<T>(data: T[] | null, fallback: T[], getKey: (item: T) 
 
 function normalizeSocialLinks(data: import("@/lib/types").SocialLink[] | null) {
   const rows = mergeMissingRows(data, fallbackData.socialLinks, (social) => social.platform);
-  return rows.map((social) => social.platform === "GitHub"
-    ? { ...social, url: "https://github.com/purusottamkumar674" }
-    : social);
+  return rows.map((social) => {
+    if (social.platform === "GitHub") return { ...social, url: "https://github.com/purusottamkumar674" };
+    if (social.platform === "Email" && social.url === "mailto:your-email@example.com") {
+      return { ...social, url: "mailto:purusottamsingh238@gmail.com" };
+    }
+    return social;
+  });
 }
 
 const requestedProjectOrder = [
