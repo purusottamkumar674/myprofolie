@@ -8,7 +8,7 @@ insert into public.site_settings (
   'Purushottam',
   'Full-Stack Web Developer',
   'purusottamsingh238@gmail.com',
-  'Add from Admin',
+  '7761980518',
   'India',
   'Available for selected projects',
   'Hello, I build for the web',

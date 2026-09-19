@@ -39,12 +39,13 @@ function mapSettings(row?: SettingsRow | null): SiteSettings {
   const base = fallbackData.settings;
   if (!row) return base;
   const email = row.email && row.email !== "your-email@example.com" ? row.email : base.email;
+  const phone = row.phone && row.phone !== "Add from Admin" ? row.phone : base.phone;
 
   return {
     name: row.name || base.name,
     role: row.role || base.role,
     email,
-    phone: row.phone || base.phone,
+    phone,
     location: row.location || base.location,
     availability: row.availability || base.availability,
     heroEyebrow: row.hero_eyebrow || base.heroEyebrow,
@@ -85,6 +86,7 @@ function normalizeSocialLinks(data: import("@/lib/types").SocialLink[] | null) {
   const rows = mergeMissingRows(data, fallbackData.socialLinks, (social) => social.platform);
   return rows.map((social) => {
     if (social.platform === "GitHub") return { ...social, url: "https://github.com/purusottamkumar674" };
+    if (social.platform === "WhatsApp") return { ...social, url: "https://wa.me/917761980518" };
     if (social.platform === "Email" && social.url === "mailto:your-email@example.com") {
       return { ...social, url: "mailto:purusottamsingh238@gmail.com" };
     }

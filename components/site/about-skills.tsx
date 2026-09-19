@@ -35,7 +35,12 @@ export function AboutSection({ settings }: { settings: SiteSettings }) {
                     <span className="absolute -left-6 top-10 size-28 rounded-full bg-violet-500/20 blur-2xl" />
                     <span className="absolute -right-6 bottom-5 size-28 rounded-full bg-teal-300/15 blur-2xl" />
                   </div>
-                  <span className="font-display text-8xl font-black tracking-[-0.09em] text-white">P<span className="text-teal-300">.</span></span>
+                  <img
+                    src="/projects/aapna.png"
+                    alt="Purushottam"
+                    className="absolute inset-0 h-full w-full object-cover object-top"
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#101018]/60 via-transparent to-transparent" />
                   <span className="absolute -right-4 top-7 rounded-2xl border border-white/10 bg-[#171721]/90 p-3 text-violet-300 shadow-xl"><Code2 size={20} /></span>
                   <span className="absolute -bottom-4 left-8 rounded-2xl border border-white/10 bg-[#171721]/90 p-3 text-teal-300 shadow-xl"><Database size={20} /></span>
                 </motion.div>

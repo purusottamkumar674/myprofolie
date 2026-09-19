@@ -771,7 +771,7 @@ export const fallbackSocialLinks: SocialLink[] = [
   { id: "social-1", platform: "GitHub", url: "https://github.com/purusottamkumar674", display_order: 1 },
   { id: "social-2", platform: "LinkedIn", url: "#contact", display_order: 2 },
   { id: "social-3", platform: "Email", url: "mailto:purusottamsingh238@gmail.com", display_order: 3 },
-  { id: "social-4", platform: "WhatsApp", url: "#contact", display_order: 4 },
+  { id: "social-4", platform: "WhatsApp", url: "https://wa.me/917761980518", display_order: 4 },
 ];
 
 export const fallbackSections: SectionSetting[] = [
@@ -800,7 +800,7 @@ export const fallbackData: PortfolioData = {
     name: "Purushottam",
     role: "Full-Stack Web Developer",
     email: "purusottamsingh238@gmail.com",
-    phone: "Add from Admin",
+    phone: "7761980518",
     location: "India",
     availability: "Available for selected projects",
     heroEyebrow: "Hello, I build for the web",
