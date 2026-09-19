@@ -1,31 +1,25 @@
 "use client";
 
+import Image from "next/image";
 import gsap from "gsap";
 
 import {
   AnimatePresence,
   motion,
-  useMotionValue,
   useReducedMotion,
-  useSpring,
 } from "framer-motion";
 
 import {
   ArrowDown,
   ArrowRight,
   ArrowUpRight,
-  Braces,
-  Check,
   Code2,
   Download,
   Globe2,
   Layers3,
-  Sparkles,
-  Zap,
 } from "lucide-react";
 
 import {
-  type CSSProperties,
   type ReactNode,
   useEffect,
   useRef,
@@ -63,6 +57,16 @@ const tech = [
 ];
 
 /* =========================================================
+   HERO IMAGE SLIDER
+========================================================= */
+
+const heroPhotos = [
+  "/standing.png",
+  "/sitting.png",
+  "/sitting1.png",
+] as const;
+
+/* =========================================================
    HERO
 ========================================================= */
 
@@ -74,9 +78,8 @@ export function Hero({
   projectCount: number;
 }) {
   const rootRef = useRef<HTMLElement>(null);
-  const visualRef = useRef<HTMLDivElement>(null);
-
   const [word, setWord] = useState(0);
+  const [activePhoto, setActivePhoto] = useState(0);
 
   const reduceMotion = useReducedMotion();
 
@@ -132,19 +135,17 @@ export function Hero({
       );
 
       gsap.fromTo(
-        ".hero-console",
+        ".hero-photo",
         {
-          scale: 0.9,
+          scale: 0.92,
           opacity: 0,
-          y: 35,
-          rotateY: -7,
+          y: 45,
           filter: "blur(8px)",
         },
         {
           scale: 1,
           opacity: 1,
           y: 0,
-          rotateY: 0,
           filter: "blur(0px)",
           duration: 1.25,
           delay: 0.75,
@@ -157,64 +158,25 @@ export function Hero({
   }, [animationsEnabled]);
 
   /* =======================================================
-     3D CODE WINDOW
+     HERO IMAGE AUTO SLIDER
   ======================================================= */
 
-  const rotateX = useSpring(0, {
-    stiffness: 150,
-    damping: 20,
-  });
-
-  const rotateY = useSpring(0, {
-    stiffness: 150,
-    damping: 20,
-  });
-
-  const mouseX = useMotionValue(320);
-  const mouseY = useMotionValue(240);
-
-  const handlePointerMove = (
-    event: React.PointerEvent<HTMLDivElement>
-  ) => {
-    if (
-      reduceMotion ||
-      event.pointerType === "touch"
-    ) {
+  useEffect(() => {
+    if (heroPhotos.length <= 1) {
       return;
     }
 
-    const rect =
-      event.currentTarget.getBoundingClientRect();
+    const slider = window.setInterval(() => {
+      setActivePhoto(
+        (current) =>
+          (current + 1) % heroPhotos.length
+      );
+    }, 3200);
 
-    const x =
-      event.clientX - rect.left;
-
-    const y =
-      event.clientY - rect.top;
-
-    mouseX.set(x);
-    mouseY.set(y);
-
-    const centerX =
-      rect.width / 2;
-
-    const centerY =
-      rect.height / 2;
-
-    const rotateAmountY =
-      ((x - centerX) / centerX) * 5;
-
-    const rotateAmountX =
-      ((centerY - y) / centerY) * 5;
-
-    rotateX.set(rotateAmountX);
-    rotateY.set(rotateAmountY);
-  };
-
-  const resetTilt = () => {
-    rotateX.set(0);
-    rotateY.set(0);
-  };
+    return () => {
+      window.clearInterval(slider);
+    };
+  }, []);
 
   return (
     <section
@@ -880,18 +842,16 @@ export function Hero({
         </div>
 
         {/* ===================================================
-            RIGHT INTERACTIVE VISUAL
+            RIGHT PERSON IMAGE SLIDER
         =================================================== */}
 
         <div
-          ref={visualRef}
           className={`
-            hero-console
+            hero-photo
             relative
             mx-auto
             w-full
-            max-w-[650px]
-            [perspective:1400px]
+            max-w-[580px]
 
             ${
               animationsEnabled
@@ -903,19 +863,12 @@ export function Hero({
           {/* LARGE BACK GLOW */}
 
           <motion.div
+            aria-hidden="true"
             animate={
               animationsEnabled
                 ? {
-                    scale: [
-                      1,
-                      1.08,
-                      1,
-                    ],
-                    opacity: [
-                      0.4,
-                      0.7,
-                      0.4,
-                    ],
+                    scale: [1, 1.08, 1],
+                    opacity: [0.28, 0.52, 0.28],
                   }
                 : undefined
             }
@@ -925,559 +878,516 @@ export function Hero({
               ease: "easeInOut",
             }}
             className="
-              absolute
-              -inset-12
-              -z-20
-              rounded-[50%]
-              bg-violet-600/15
-              blur-[100px]
-            "
-          />
-
-          {/* DECORATIVE RINGS */}
-
-          <motion.div
-            animate={
-              animationsEnabled
-                ? {
-                    rotate: 360,
-                  }
-                : undefined
-            }
-            transition={{
-              duration: 30,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            className="
               pointer-events-none
               absolute
-              -inset-7
-              -z-10
-              rounded-[42px]
-              border
-              border-dashed
-              border-white/[0.055]
+              left-1/2
+              top-1/2
+              -z-20
+              h-[78%]
+              w-[78%]
+              -translate-x-1/2
+              -translate-y-1/2
+              rounded-full
+              bg-violet-600/20
+              blur-[115px]
             "
           />
 
-          {/* BACK CARD */}
-
-          <div
-            className="
-              absolute
-              inset-3
-              -z-10
-              translate-x-3
-              translate-y-5
-              rotate-[2deg]
-              rounded-[30px]
-              border
-              border-white/[0.05]
-              bg-white/[0.018]
-            "
-          />
-
-          {/* MAIN CODE CARD */}
+          {/* TEAL AMBIENT GLOW */}
 
           <motion.div
-            onPointerMove={
-              handlePointerMove
-            }
-            onPointerLeave={
-              resetTilt
-            }
-            style={{
-              rotateX,
-              rotateY,
-              transformStyle:
-                "preserve-3d",
-            }}
-            className="
-              group/code
-              relative
-              overflow-hidden
-              rounded-[26px]
-              border
-              border-white/[0.10]
-              bg-[#101016]/90
-              shadow-[0_35px_100px_rgba(0,0,0,.55),inset_0_1px_0_rgba(255,255,255,.06)]
-              backdrop-blur-2xl
-            "
-            data-cursor="EXPLORE"
-          >
-            {/* MOUSE LIGHT */}
-
-            <motion.div
-              aria-hidden="true"
-              style={{
-                left: mouseX,
-                top: mouseY,
-              }}
-              className="
-                pointer-events-none
-                absolute
-                z-0
-                size-[340px]
-                -translate-x-1/2
-                -translate-y-1/2
-                rounded-full
-                bg-violet-400/[0.08]
-                opacity-0
-                blur-[70px]
-                transition-opacity
-                duration-500
-                group-hover/code:opacity-100
-              "
-            />
-
-            {/* TOP SHINE */}
-
-            <div
-              className="
-                pointer-events-none
-                absolute
-                inset-x-16
-                top-0
-                z-20
-                h-px
-                bg-gradient-to-r
-                from-transparent
-                via-white/35
-                to-transparent
-              "
-            />
-
-            {/* WINDOW HEADER */}
-
-            <div
-              className="
-                relative
-                z-10
-                flex
-                items-center
-                justify-between
-                border-b
-                border-white/[0.08]
-                bg-white/[0.015]
-                px-4
-                py-4
-
-                sm:px-5
-              "
-            >
-              <div
-                className="
-                  flex
-                  items-center
-                  gap-2
-                "
-              >
-                <span className="size-2.5 rounded-full bg-[#ff5f57] shadow-[0_0_9px_rgba(255,95,87,.25)]" />
-
-                <span className="size-2.5 rounded-full bg-[#febc2e] shadow-[0_0_9px_rgba(254,188,46,.20)]" />
-
-                <span className="size-2.5 rounded-full bg-[#28c840] shadow-[0_0_9px_rgba(40,200,64,.20)]" />
-              </div>
-
-              <div
-                className="
-                  flex
-                  items-center
-                  gap-2
-                  rounded-full
-                  border
-                  border-white/[0.06]
-                  bg-white/[0.025]
-                  px-3
-                  py-1.5
-                "
-              >
-                <span
-                  className="
-                    size-1.5
-                    rounded-full
-                    bg-teal-300
-                    shadow-[0_0_8px_rgba(94,234,212,.8)]
-                  "
-                />
-
-                <span
-                  className="
-                    font-mono
-                    text-[9px]
-                    uppercase
-                    tracking-[0.18em]
-                    text-white/35
-
-                    sm:text-[10px]
-                  "
-                >
-                  developer.ts
-                </span>
-              </div>
-
-              <Braces
-                size={15}
-                className="text-violet-300"
-              />
-            </div>
-
-            {/* CODE BODY */}
-
-            <div
-              className="
-                relative
-                z-10
-                overflow-hidden
-                p-4
-                font-mono
-                text-[10px]
-                leading-7
-
-                sm:p-7
-                sm:text-[13px]
-                sm:leading-8
-              "
-            >
-              <CodeLine number="01">
-                <span className="text-violet-300">
-                  const
-                </span>{" "}
-                <span className="text-sky-300">
-                  developer
-                </span>{" "}
-                = {"{"}
-              </CodeLine>
-
-              <CodeLine
-                number="02"
-                indent
-              >
-                <span className="text-pink-300">
-                  name
-                </span>
-                :{" "}
-                <span className="text-emerald-300">
-                  &quot;
-                  {settings.name}
-                  &quot;
-                </span>
-                ,
-              </CodeLine>
-
-              <CodeLine
-                number="03"
-                indent
-              >
-                <span className="text-pink-300">
-                  role
-                </span>
-                :{" "}
-                <span className="text-emerald-300">
-                  &quot;
-                  {settings.role}
-                  &quot;
-                </span>
-                ,
-              </CodeLine>
-
-              <CodeLine
-                number="04"
-                indent
-              >
-                <span className="text-pink-300">
-                  stack
-                </span>
-                : [
-              </CodeLine>
-
-              <CodeLine
-                number="05"
-                indentMore
-              >
-                <span className="text-emerald-300">
-                  &quot;Next.js&quot;
-                </span>
-                ,{" "}
-                <span className="text-emerald-300">
-                  &quot;TypeScript&quot;
-                </span>
-                ,
-              </CodeLine>
-
-              <CodeLine
-                number="06"
-                indentMore
-              >
-                <span className="text-emerald-300">
-                  &quot;Supabase&quot;
-                </span>
-                ,{" "}
-                <span className="text-emerald-300">
-                  &quot;Motion&quot;
-                </span>
-              </CodeLine>
-
-              <CodeLine
-                number="07"
-                indent
-              >
-                ],
-              </CodeLine>
-
-              <CodeLine
-                number="08"
-                indent
-              >
-                <span className="text-pink-300">
-                  quality
-                </span>
-                :{" "}
-                <span className="text-amber-300">
-                  &quot;production-ready&quot;
-                </span>
-                ,
-              </CodeLine>
-
-              <CodeLine
-                number="09"
-                indent
-              >
-                <span className="text-pink-300">
-                  responsive
-                </span>
-                :{" "}
-                <span className="text-sky-300">
-                  true
-                </span>
-                ,
-              </CodeLine>
-
-              <CodeLine number="10">
-                {"}"};
-              </CodeLine>
-
-              {/* TERMINAL */}
-
-              <div
-                className="
-                  mt-5
-                  flex
-                  items-center
-                  gap-2
-                  rounded-xl
-                  border
-                  border-white/[0.06]
-                  bg-black/20
-                  px-3
-                  py-2.5
-                  text-white/35
-                "
-              >
-                <span className="text-teal-300">
-                  ›
-                </span>
-
-                <span className="truncate">
-                  npm run
-                  create-future
-                </span>
-
-                <motion.span
-                  animate={
-                    animationsEnabled
-                      ? {
-                          opacity: [
-                            1,
-                            0,
-                            1,
-                          ],
-                        }
-                      : undefined
-                  }
-                  transition={{
-                    duration: 0.9,
-                    repeat: Infinity,
-                  }}
-                  className="
-                    h-4
-                    w-[2px]
-                    bg-teal-300
-                  "
-                />
-              </div>
-            </div>
-
-            {/* BOTTOM STATUS */}
-
-            <div
-              className="
-                relative
-                z-10
-                flex
-                flex-wrap
-                items-center
-                justify-between
-                gap-3
-                border-t
-                border-white/[0.06]
-                bg-white/[0.012]
-                px-4
-                py-3
-
-                sm:px-6
-              "
-            >
-              <div
-                className="
-                  flex
-                  items-center
-                  gap-2
-                  text-[10px]
-                  text-white/35
-                "
-              >
-                <Check
-                  size={12}
-                  className="text-teal-300"
-                />
-
-                Production ready
-              </div>
-
-              <div
-                className="
-                  flex
-                  items-center
-                  gap-2
-                  text-[10px]
-                  text-white/35
-                "
-              >
-                <Zap
-                  size={12}
-                  className="text-amber-300"
-                />
-
-                Optimized
-              </div>
-            </div>
-          </motion.div>
-
-          {/* =================================================
-              FLOATING BADGES
-          ================================================= */}
-
-          <FloatingBadge
-            className="
-              -left-2
-              top-[14%]
-
-              sm:-left-8
-            "
-            delay={0}
-            animationsEnabled={
-              animationsEnabled
-            }
-          >
-            NEXT.JS
-          </FloatingBadge>
-
-          <FloatingBadge
-            className="
-              -right-1
-              top-[25%]
-
-              sm:-right-8
-            "
-            delay={1.1}
-            animationsEnabled={
-              animationsEnabled
-            }
-          >
-            SUPABASE
-          </FloatingBadge>
-
-          <FloatingBadge
-            className="
-              bottom-[9%]
-              left-[3%]
-
-              sm:left-[7%]
-            "
-            delay={2}
-            animationsEnabled={
-              animationsEnabled
-            }
-          >
-            TYPESCRIPT
-          </FloatingBadge>
-
-          {/* PRODUCTION BADGE */}
-
-          <motion.div
+            aria-hidden="true"
             animate={
               animationsEnabled
                 ? {
-                    rotate: [
-                      -1,
-                      2,
-                      -1,
-                    ],
-                    y: [
-                      0,
-                      -7,
-                      0,
-                    ],
+                    x: [0, 18, 0],
+                    y: [0, -14, 0],
+                    opacity: [0.12, 0.3, 0.12],
                   }
                 : undefined
             }
             transition={{
-              duration: 5,
+              duration: 7,
               repeat: Infinity,
               ease: "easeInOut",
             }}
             className="
+              pointer-events-none
               absolute
-              -bottom-8
-              right-0
-              flex
-              items-center
-              gap-2
-              rounded-2xl
-              border
-              border-white/10
-              bg-[#15151d]/95
-              px-4
-              py-3
-              text-[10px]
-              font-semibold
-              text-white/70
-              shadow-2xl
-              backdrop-blur-xl
+              right-[2%]
+              top-[12%]
+              -z-10
+              h-44
+              w-44
+              rounded-full
+              bg-teal-300/15
+              blur-[80px]
+            "
+          />
 
-              sm:-right-6
-              sm:text-xs
+          {/* PREMIUM IMAGE FRAME */}
+
+          <motion.div
+            animate={
+              animationsEnabled
+                ? {
+                    y: [0, -5, 0],
+                  }
+                : undefined
+            }
+            transition={{
+              duration: 5.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="
+              relative
+              overflow-hidden
+              rounded-[32px]
+              border
+              border-white/[0.14]
+              bg-gradient-to-b
+              from-white/[0.08]
+              via-white/[0.035]
+              to-white/[0.02]
+              p-[1px]
+              shadow-[0_35px_100px_rgba(0,0,0,.48),0_0_0_1px_rgba(139,92,246,.05)]
+              backdrop-blur-xl
             "
           >
-            <span
+            {/* ANIMATED BORDER LIGHT */}
+
+            <motion.div
+              aria-hidden="true"
+              animate={
+                animationsEnabled
+                  ? {
+                      opacity: [0.3, 0.8, 0.3],
+                    }
+                  : undefined
+              }
+              transition={{
+                duration: 4.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
               className="
-                grid
-                size-7
-                place-items-center
-                rounded-lg
-                bg-amber-300/[0.08]
+                pointer-events-none
+                absolute
+                inset-0
+                rounded-[32px]
+                bg-gradient-to-br
+                from-violet-400/20
+                via-transparent
+                to-teal-300/20
+              "
+            />
+
+            <div
+              className="
+                relative
+                overflow-hidden
+                rounded-[31px]
+                border
+                border-white/[0.06]
+                bg-[#0c0c13]
               "
             >
-              <Sparkles
-                size={14}
-                className="text-amber-300"
-              />
-            </span>
+              {/* IMAGE VIEWPORT */}
 
-            Production minded
+              <div
+                className="
+                  relative
+                  h-[430px]
+                  w-full
+                  overflow-hidden
+
+                  min-[380px]:h-[470px]
+                  sm:h-[540px]
+                  md:h-[580px]
+                  lg:h-[640px]
+                  xl:h-[670px]
+                "
+              >
+                {/* SOFT INNER BACKGROUND */}
+
+                <div
+                  aria-hidden="true"
+                  className="
+                    pointer-events-none
+                    absolute
+                    inset-0
+                    bg-[radial-gradient(circle_at_50%_35%,rgba(139,92,246,.11),transparent_45%),radial-gradient(circle_at_78%_30%,rgba(45,212,191,.07),transparent_32%)]
+                  "
+                />
+
+                {/* SLIDING IMAGE */}
+
+                <AnimatePresence
+                  initial={false}
+                  mode="sync"
+                >
+                  <motion.div
+                    key={heroPhotos[activePhoto]}
+                    initial={
+                      animationsEnabled
+                        ? {
+                            opacity: 0,
+                            x: 65,
+                            scale: 0.94,
+                            filter: "blur(10px)",
+                          }
+                        : {
+                            opacity: 1,
+                            x: 0,
+                            scale: 1,
+                            filter: "blur(0px)",
+                          }
+                    }
+                    animate={{
+                      opacity: 1,
+                      x: 0,
+                      scale: 1,
+                      filter: "blur(0px)",
+                    }}
+                    exit={
+                      animationsEnabled
+                        ? {
+                            opacity: 0,
+                            x: -65,
+                            scale: 0.96,
+                            filter: "blur(8px)",
+                          }
+                        : {
+                            opacity: 0,
+                          }
+                    }
+                    transition={{
+                      duration: animationsEnabled ? 0.82 : 0,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    className="
+                      absolute
+                      inset-0
+                      z-10
+                    "
+                  >
+                    <Image
+                      src={heroPhotos[activePhoto]}
+                      alt={`${settings.name} portrait ${
+                        activePhoto + 1
+                      }`}
+                      fill
+                      priority={activePhoto === 0}
+                      sizes="(max-width: 640px) 94vw, (max-width: 1024px) 80vw, 45vw"
+                      className="
+                        select-none
+                        object-contain
+                        object-bottom
+                        p-2
+                        drop-shadow-[0_32px_42px_rgba(0,0,0,.48)]
+
+                        sm:p-3
+                        lg:p-4
+                      "
+                    />
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* PRELOAD OTHER SLIDES */}
+
+                <div
+                  aria-hidden="true"
+                  className="hidden"
+                >
+                  {heroPhotos.map((src) => (
+                    <Image
+                      key={src}
+                      src={src}
+                      alt=""
+                      width={1}
+                      height={1}
+                    />
+                  ))}
+                </div>
+
+                {/* TOP SHINE */}
+
+                <div
+                  aria-hidden="true"
+                  className="
+                    pointer-events-none
+                    absolute
+                    left-1/2
+                    top-0
+                    z-20
+                    h-px
+                    w-[72%]
+                    -translate-x-1/2
+                    bg-gradient-to-r
+                    from-transparent
+                    via-white/50
+                    to-transparent
+                  "
+                />
+
+                {/* BOTTOM FADE */}
+
+                <div
+                  aria-hidden="true"
+                  className="
+                    pointer-events-none
+                    absolute
+                    inset-x-0
+                    bottom-0
+                    z-20
+                    h-32
+                    bg-gradient-to-t
+                    from-[#08080d]/72
+                    via-[#08080d]/18
+                    to-transparent
+                  "
+                />
+
+                {/* FLOOR SHADOW */}
+
+                <motion.div
+                  aria-hidden="true"
+                  animate={
+                    animationsEnabled
+                      ? {
+                          scaleX: [0.92, 1, 0.92],
+                          opacity: [0.32, 0.5, 0.32],
+                        }
+                      : undefined
+                  }
+                  transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  className="
+                    pointer-events-none
+                    absolute
+                    bottom-3
+                    left-1/2
+                    z-[5]
+                    h-12
+                    w-[64%]
+                    -translate-x-1/2
+                    rounded-[50%]
+                    bg-black/70
+                    blur-2xl
+                  "
+                />
+
+                {/* FLOATING LIGHTS */}
+
+                <motion.span
+                  aria-hidden="true"
+                  animate={
+                    animationsEnabled
+                      ? {
+                          y: [0, -9, 0],
+                          opacity: [0.4, 1, 0.4],
+                        }
+                      : undefined
+                  }
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  className="
+                    absolute
+                    right-[7%]
+                    top-[18%]
+                    z-30
+                    size-2
+                    rounded-full
+                    bg-teal-300
+                    shadow-[0_0_24px_rgba(94,234,212,.9)]
+                  "
+                />
+
+                <motion.span
+                  aria-hidden="true"
+                  animate={
+                    animationsEnabled
+                      ? {
+                          y: [0, 9, 0],
+                          opacity: [0.4, 0.9, 0.4],
+                        }
+                      : undefined
+                  }
+                  transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  className="
+                    absolute
+                    left-[7%]
+                    top-[34%]
+                    z-30
+                    size-1.5
+                    rounded-full
+                    bg-violet-300
+                    shadow-[0_0_22px_rgba(196,181,253,.9)]
+                  "
+                />
+
+                {/* IMAGE COUNTER */}
+
+                <div
+                  className="
+                    absolute
+                    left-4
+                    top-4
+                    z-30
+                    rounded-full
+                    border
+                    border-white/10
+                    bg-black/30
+                    px-3
+                    py-1.5
+                    font-mono
+                    text-[9px]
+                    font-semibold
+                    tracking-[0.16em]
+                    text-white/60
+                    backdrop-blur-xl
+                  "
+                >
+                  {String(activePhoto + 1).padStart(2, "0")}
+                  <span className="mx-1 text-white/20">/</span>
+                  {String(heroPhotos.length).padStart(2, "0")}
+                </div>
+              </div>
+
+              {/* SLIDER FOOTER */}
+
+              <div
+                className="
+                  relative
+                  z-30
+                  flex
+                  items-center
+                  justify-between
+                  gap-4
+                  border-t
+                  border-white/[0.07]
+                  bg-white/[0.025]
+                  px-4
+                  py-3.5
+                  backdrop-blur-xl
+
+                  sm:px-5
+                  sm:py-4
+                "
+              >
+                <div className="min-w-0">
+                  <p
+                    className="
+                      text-[8px]
+                      font-semibold
+                      uppercase
+                      tracking-[0.22em]
+                      text-white/30
+
+                      sm:text-[9px]
+                    "
+                  >
+                    Developer portfolio
+                  </p>
+
+                  <p
+                    className="
+                      mt-1
+                      truncate
+                      text-[11px]
+                      font-medium
+                      text-white/65
+
+                      sm:text-xs
+                    "
+                  >
+                    Creative. Modern. Production ready.
+                  </p>
+                </div>
+
+                {/* SLIDER DOTS */}
+
+                <div
+                  className="
+                    flex
+                    shrink-0
+                    items-center
+                    gap-2
+                  "
+                >
+                  {heroPhotos.map((src, index) => {
+                    const isActive =
+                      activePhoto === index;
+
+                    return (
+                      <button
+                        key={src}
+                        type="button"
+                        onClick={() =>
+                          setActivePhoto(index)
+                        }
+                        aria-label={`Show photo ${
+                          index + 1
+                        }`}
+                        aria-current={
+                          isActive
+                            ? "true"
+                            : undefined
+                        }
+                        className={`
+                          relative
+                          h-2
+                          rounded-full
+                          transition-all
+                          duration-500
+
+                          ${
+                            isActive
+                              ? "w-8 bg-gradient-to-r from-violet-400 to-teal-300 shadow-[0_0_14px_rgba(94,234,212,.22)]"
+                              : "w-2 bg-white/20 hover:bg-white/45"
+                          }
+                        `}
+                      >
+                        <span className="sr-only">
+                          Photo {index + 1}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
           </motion.div>
+
+          {/* OUTER BOTTOM GLOW */}
+
+          <div
+            aria-hidden="true"
+            className="
+              pointer-events-none
+              absolute
+              -bottom-8
+              left-1/2
+              -z-10
+              h-16
+              w-[82%]
+              -translate-x-1/2
+              rounded-[50%]
+              bg-violet-600/12
+              blur-3xl
+            "
+          />
         </div>
       </div>
 
@@ -1664,142 +1574,6 @@ function HeroStat({
         "
       >
         {label}
-      </span>
-    </motion.div>
-  );
-}
-
-/* =========================================================
-   CODE LINE
-========================================================= */
-
-function CodeLine({
-  children,
-  number,
-  indent,
-  indentMore,
-}: {
-  children: ReactNode;
-  number: string;
-  indent?: boolean;
-  indentMore?: boolean;
-}) {
-  return (
-    <div
-      className="
-        flex
-        min-w-max
-        text-white/72
-      "
-    >
-      <span
-        className="
-          mr-3
-          w-5
-          shrink-0
-          select-none
-          text-right
-          text-white/15
-
-          sm:mr-5
-        "
-      >
-        {number}
-      </span>
-
-      <span
-        className={
-          indentMore
-            ? "pl-6 sm:pl-12"
-            : indent
-              ? "pl-3 sm:pl-6"
-              : ""
-        }
-      >
-        {children}
-      </span>
-    </div>
-  );
-}
-
-/* =========================================================
-   FLOATING BADGE
-========================================================= */
-
-function FloatingBadge({
-  children,
-  className,
-  delay,
-  animationsEnabled,
-}: {
-  children: ReactNode;
-  className: string;
-  delay: number;
-  animationsEnabled: boolean;
-}) {
-  return (
-    <motion.div
-      animate={
-        animationsEnabled
-          ? {
-              y: [
-                0,
-                -9,
-                0,
-              ],
-              rotate: [
-                0,
-                2,
-                0,
-              ],
-            }
-          : undefined
-      }
-      transition={{
-        duration: 4.8,
-        delay,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
-      className={`
-        absolute
-        z-30
-        rounded-full
-        border
-        border-white/10
-        bg-[#15151d]/95
-        px-3
-        py-2
-        font-mono
-        text-[9px]
-        font-semibold
-        tracking-[0.12em]
-        text-white/65
-        shadow-[0_15px_45px_rgba(0,0,0,.4)]
-        backdrop-blur-xl
-
-        sm:text-[10px]
-
-        ${className}
-      `}
-    >
-      <span
-        className="
-          flex
-          items-center
-          gap-2
-        "
-      >
-        <span
-          className="
-            size-1
-            rounded-full
-            bg-violet-300
-            shadow-[0_0_7px_rgba(196,181,253,.7)]
-          "
-        />
-
-        {children}
       </span>
     </motion.div>
   );

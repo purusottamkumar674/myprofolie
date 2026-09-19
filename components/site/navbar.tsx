@@ -11,8 +11,12 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import type { SiteSettings, SocialLink } from "@/lib/types";
 import { MagneticLink } from "@/components/ui/magnetic-link";
+import type { SiteSettings, SocialLink } from "@/lib/types";
+
+/* =========================================================
+   NAVIGATION ITEMS
+========================================================= */
 
 const navItems = [
   ["Home", "#home"],
@@ -24,6 +28,10 @@ const navItems = [
   ["Contact", "#contact"],
 ] as const;
 
+/* =========================================================
+   NAVBAR
+========================================================= */
+
 export function Navbar({
   settings,
   socials,
@@ -33,11 +41,12 @@ export function Navbar({
 }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("#home");
+  const [activeSection, setActiveSection] =
+    useState("#home");
 
-  /* =========================================================
+  /* =======================================================
      NAVBAR SCROLL EFFECT
-  ========================================================= */
+  ======================================================= */
 
   useEffect(() => {
     const updateNavbar = () => {
@@ -46,18 +55,25 @@ export function Navbar({
 
     updateNavbar();
 
-    window.addEventListener("scroll", updateNavbar, {
-      passive: true,
-    });
+    window.addEventListener(
+      "scroll",
+      updateNavbar,
+      {
+        passive: true,
+      }
+    );
 
     return () => {
-      window.removeEventListener("scroll", updateNavbar);
+      window.removeEventListener(
+        "scroll",
+        updateNavbar
+      );
     };
   }, []);
 
-  /* =========================================================
+  /* =======================================================
      ACTIVE SECTION DETECTION
-  ========================================================= */
+  ======================================================= */
 
   useEffect(() => {
     const sections = navItems
@@ -66,12 +82,16 @@ export function Navbar({
       )
       .filter(Boolean) as Element[];
 
-    if (!sections.length) return;
+    if (!sections.length) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
         const visibleEntries = entries
-          .filter((entry) => entry.isIntersecting)
+          .filter(
+            (entry) => entry.isIntersecting
+          )
           .sort(
             (a, b) =>
               b.intersectionRatio -
@@ -85,38 +105,44 @@ export function Navbar({
         }
       },
       {
-        rootMargin: "-35% 0px -50% 0px",
+        rootMargin:
+          "-35% 0px -50% 0px",
         threshold: [0.05, 0.2, 0.5],
       }
     );
 
-    sections.forEach((section) =>
-      observer.observe(section)
-    );
+    sections.forEach((section) => {
+      observer.observe(section);
+    });
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
-  /* =========================================================
-     MOBILE MENU BODY LOCK
-  ========================================================= */
+  /* =======================================================
+     MOBILE BODY SCROLL LOCK
+  ======================================================= */
 
   useEffect(() => {
-    document.body.style.overflow = open
-      ? "hidden"
-      : "";
+    if (open) {
+      document.body.style.overflow =
+        "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
 
     return () => {
       document.body.style.overflow = "";
     };
   }, [open]);
 
-  /* =========================================================
-     ESC CLOSE
-  ========================================================= */
+  /* =======================================================
+     ESCAPE KEY CLOSE
+  ======================================================= */
 
   useEffect(() => {
-    const closeWithEscape = (
+    const handleEscape = (
       event: KeyboardEvent
     ) => {
       if (event.key === "Escape") {
@@ -126,20 +152,21 @@ export function Navbar({
 
     window.addEventListener(
       "keydown",
-      closeWithEscape
+      handleEscape
     );
 
-    return () =>
+    return () => {
       window.removeEventListener(
         "keydown",
-        closeWithEscape
+        handleEscape
       );
+    };
   }, []);
 
   return (
     <>
       {/* =====================================================
-          DESKTOP / MAIN NAVBAR
+          MAIN NAVBAR
       ===================================================== */}
 
       <motion.header
@@ -162,6 +189,7 @@ export function Navbar({
           z-50
           px-3
           pt-3
+
           sm:px-5
           sm:pt-4
         "
@@ -216,7 +244,7 @@ export function Navbar({
             "
           />
 
-          {/* NAVBAR BACKGROUND GLOW */}
+          {/* LEFT GLOW */}
 
           <div
             className="
@@ -231,6 +259,8 @@ export function Navbar({
               blur-[80px]
             "
           />
+
+          {/* RIGHT GLOW */}
 
           <div
             className="
@@ -299,8 +329,6 @@ export function Navbar({
                 group-hover:shadow-[0_0_30px_rgba(139,92,246,0.16)]
               "
             >
-              {/* LOGO GLOW */}
-
               <span
                 className="
                   absolute
@@ -323,6 +351,8 @@ export function Navbar({
                 </span>
               </span>
             </motion.span>
+
+            {/* NAME */}
 
             <div
               className="
@@ -386,6 +416,7 @@ export function Navbar({
               border-white/[0.06]
               bg-white/[0.025]
               p-1
+
               lg:flex
             "
             aria-label="Primary navigation"
@@ -407,8 +438,8 @@ export function Navbar({
                       items-center
                       justify-center
                       rounded-full
-                      px-3.5
-                      text-[12px]
+                      px-3
+                      text-[11px]
                       font-medium
                       text-white/48
                       transition-colors
@@ -425,7 +456,7 @@ export function Navbar({
                         : undefined
                     }
                   >
-                    {/* ACTIVE BACKGROUND */}
+                    {/* ACTIVE BG */}
 
                     {active && (
                       <motion.span
@@ -497,7 +528,7 @@ export function Navbar({
           </nav>
 
           {/* =================================================
-              NAVBAR RIGHT BUTTONS
+              RIGHT BUTTONS
           ================================================= */}
 
           <div
@@ -505,6 +536,7 @@ export function Navbar({
               relative
               z-10
               flex
+              shrink-0
               items-center
               gap-2
             "
@@ -543,8 +575,6 @@ export function Navbar({
               "
               cursor="GET CV"
             >
-              {/* SHINE */}
-
               <span
                 className="
                   pointer-events-none
@@ -563,17 +593,12 @@ export function Navbar({
 
               <ArrowDownToLine
                 size={14}
-                className="
-                  transition-transform
-                  duration-300
-                  group-hover/resume:translate-y-0.5
-                "
               />
 
               Resume
             </MagneticLink>
 
-            {/* TALK BUTTON */}
+            {/* TALK */}
 
             <MagneticLink
               href="/#contact"
@@ -606,36 +631,12 @@ export function Navbar({
               "
               cursor="TALK"
             >
-              {/* BUTTON GLOW */}
-
-              <span
-                className="
-                  absolute
-                  inset-0
-                  bg-gradient-to-r
-                  from-white/10
-                  via-transparent
-                  to-teal-300/10
-                  opacity-0
-                  transition-opacity
-                  duration-300
-                  group-hover/talk:opacity-100
-                "
-              />
-
               <span className="relative">
                 Let&apos;s talk
               </span>
 
               <ArrowUpRight
                 size={15}
-                className="
-                  relative
-                  transition-transform
-                  duration-300
-                  group-hover/talk:-translate-y-0.5
-                  group-hover/talk:translate-x-0.5
-                "
               />
             </MagneticLink>
 
@@ -654,6 +655,7 @@ export function Navbar({
                 relative
                 grid
                 size-11
+                shrink-0
                 place-items-center
                 overflow-hidden
                 rounded-full
@@ -670,7 +672,7 @@ export function Navbar({
                 lg:hidden
               "
               aria-label="Open navigation"
-              data-cursor="MENU"
+              aria-expanded={open}
             >
               <span
                 className="
@@ -695,7 +697,7 @@ export function Navbar({
       </motion.header>
 
       {/* =====================================================
-          MOBILE NAVIGATION
+          MOBILE / TABLET NAVIGATION
       ===================================================== */}
 
       <AnimatePresence>
@@ -704,7 +706,7 @@ export function Navbar({
             className="
               fixed
               inset-0
-              z-[100]
+              z-[999]
               lg:hidden
             "
             initial={{
@@ -721,16 +723,16 @@ export function Navbar({
 
             <motion.button
               type="button"
-              aria-label="Close navigation backdrop"
-              className="
-                absolute
-                inset-0
-                bg-black/75
-                backdrop-blur-md
-              "
+              aria-label="Close navigation"
               onClick={() =>
                 setOpen(false)
               }
+              className="
+                absolute
+                inset-0
+                bg-black/80
+                backdrop-blur-md
+              "
               initial={{
                 opacity: 0,
               }}
@@ -742,7 +744,9 @@ export function Navbar({
               }}
             />
 
-            {/* SIDE PANEL */}
+            {/* ===============================================
+                MOBILE SIDE PANEL
+            =============================================== */}
 
             <motion.aside
               className="
@@ -750,16 +754,25 @@ export function Navbar({
                 right-0
                 top-0
                 flex
-                h-full
-                w-[min(92vw,520px)]
+                h-[100dvh]
+                w-[min(94vw,480px)]
                 flex-col
-                overflow-hidden
+                overflow-x-hidden
+                overflow-y-auto
+                overscroll-contain
                 border-l
                 border-white/10
                 bg-[#0a0a10]
-                p-5
+                px-4
+                pb-[max(20px,env(safe-area-inset-bottom))]
+                pt-4
+                shadow-[-25px_0_100px_rgba(0,0,0,0.55)]
 
-                sm:p-8
+                min-[380px]:px-5
+                min-[380px]:pt-5
+
+                sm:px-7
+                sm:pt-7
               "
               initial={{
                 x: "100%",
@@ -771,16 +784,21 @@ export function Navbar({
                 x: "100%",
               }}
               transition={{
-                duration: 0.62,
-                ease: [0.76, 0, 0.24, 1],
+                duration: 0.45,
+                ease: [
+                  0.76,
+                  0,
+                  0.24,
+                  1,
+                ],
               }}
             >
-              {/* PANEL GLOW */}
+              {/* BACKGROUND GLOW 1 */}
 
               <div
                 className="
                   pointer-events-none
-                  absolute
+                  fixed
                   -right-32
                   -top-28
                   size-[350px]
@@ -790,12 +808,14 @@ export function Navbar({
                 "
               />
 
+              {/* BACKGROUND GLOW 2 */}
+
               <div
                 className="
                   pointer-events-none
-                  absolute
+                  fixed
                   -bottom-32
-                  -left-24
+                  right-0
                   size-[300px]
                   rounded-full
                   bg-teal-400/[0.055]
@@ -803,68 +823,109 @@ export function Navbar({
                 "
               />
 
-              {/* MOBILE HEADER */}
+              {/* ===============================================
+                  MOBILE HEADER
+              =============================================== */}
 
               <div
                 className="
                   relative
-                  z-10
+                  z-20
                   flex
+                  shrink-0
                   items-center
                   justify-between
                   border-b
                   border-white/10
-                  pb-5
+                  pb-4
                 "
               >
-                <div>
+                <Link
+                  href="/#home"
+                  onClick={() =>
+                    setOpen(false)
+                  }
+                  className="
+                    flex
+                    min-w-0
+                    items-center
+                    gap-3
+                  "
+                >
                   <span
                     className="
-                      text-[10px]
-                      font-medium
-                      uppercase
-                      tracking-[0.30em]
-                      text-white/35
+                      grid
+                      size-10
+                      shrink-0
+                      place-items-center
+                      rounded-xl
+                      border
+                      border-white/10
+                      bg-white/[0.06]
+                      text-sm
+                      font-black
+                      text-white
                     "
                   >
-                    Navigation
+                    P
+                    <span className="text-teal-300">
+                      .
+                    </span>
                   </span>
 
-                  <p
-                    className="
-                      mt-1
-                      text-sm
-                      font-medium
-                      text-white/75
-                    "
-                  >
-                    {settings.name}
-                  </p>
-                </div>
+                  <div className="min-w-0">
+                    <p
+                      className="
+                        max-w-[190px]
+                        truncate
+                        text-sm
+                        font-semibold
+                        text-white
+                      "
+                    >
+                      {settings.name}
+                    </p>
+
+                    <p
+                      className="
+                        mt-0.5
+                        text-[9px]
+                        uppercase
+                        tracking-[0.20em]
+                        text-white/35
+                      "
+                    >
+                      Developer
+                    </p>
+                  </div>
+                </Link>
+
+                {/* CLOSE */}
 
                 <motion.button
                   type="button"
-                  whileHover={{
-                    rotate: 90,
-                  }}
                   whileTap={{
                     scale: 0.9,
+                  }}
+                  whileHover={{
+                    rotate: 90,
                   }}
                   onClick={() =>
                     setOpen(false)
                   }
                   className="
                     grid
-                    size-11
+                    size-10
+                    shrink-0
                     place-items-center
                     rounded-full
                     border
                     border-white/10
-                    bg-white/[0.04]
+                    bg-white/[0.05]
                     text-white
                     transition
                     hover:border-violet-400/40
-                    hover:bg-white/[0.08]
+                    hover:bg-white/[0.10]
                   "
                   aria-label="Close navigation"
                 >
@@ -872,14 +933,18 @@ export function Navbar({
                 </motion.button>
               </div>
 
-              {/* MOBILE LINKS */}
+              {/* ===============================================
+                  MOBILE LINKS
+              =============================================== */}
 
               <nav
                 className="
                   relative
-                  z-10
-                  my-auto
+                  z-20
+                  mt-4
                   flex
+                  w-full
+                  shrink-0
                   flex-col
                 "
                 aria-label="Mobile navigation"
@@ -890,14 +955,14 @@ export function Navbar({
                     index
                   ) => {
                     const active =
-                      activeSection ===
-                      href;
+                      activeSection === href;
 
                     return (
                       <motion.div
                         key={href}
+                        className="w-full"
                         initial={{
-                          x: 70,
+                          x: 45,
                           opacity: 0,
                         }}
                         animate={{
@@ -906,10 +971,10 @@ export function Navbar({
                         }}
                         transition={{
                           delay:
-                            0.1 +
+                            0.05 +
                             index *
-                              0.055,
-                          duration: 0.55,
+                              0.04,
+                          duration: 0.4,
                           ease: [
                             0.22,
                             1,
@@ -927,24 +992,37 @@ export function Navbar({
                             group/mobile
                             relative
                             flex
+                            min-h-[50px]
+                            w-full
                             items-center
                             justify-between
                             overflow-hidden
                             border-b
                             border-white/[0.08]
-                            py-4
-                            text-[clamp(1.8rem,8vw,3rem)]
+                            px-1
+                            py-2
+                            text-[18px]
                             font-semibold
-                            tracking-[-0.04em]
-                            text-white/55
+                            tracking-[-0.03em]
+                            text-white/60
                             transition-all
                             duration-300
 
                             hover:pl-2
                             hover:text-white
+
+                            min-[360px]:min-h-[54px]
+                            min-[360px]:py-2.5
+                            min-[360px]:text-[20px]
+
+                            min-[400px]:min-h-[58px]
+                            min-[400px]:text-[22px]
+
+                            sm:min-h-[62px]
+                            sm:text-[24px]
                           "
                         >
-                          {/* HOVER BACKGROUND */}
+                          {/* HOVER BG */}
 
                           <span
                             className="
@@ -960,43 +1038,52 @@ export function Navbar({
                             "
                           />
 
+                          {/* LABEL */}
+
                           <span
                             className="
                               relative
+                              z-10
                               flex
+                              min-w-0
                               items-center
                               gap-3
                             "
                           >
                             <span
                               className="
-                                text-[10px]
+                                w-6
+                                shrink-0
+                                text-[9px]
                                 font-medium
                                 tracking-widest
                                 text-white/20
                               "
                             >
-                              0
-                              {index +
-                                1}
+                              {String(
+                                index +
+                                  1
+                              ).padStart(
+                                2,
+                                "0"
+                              )}
                             </span>
 
                             <span
-                              className={
+                              className={`truncate ${
                                 active
                                   ? "text-white"
                                   : ""
-                              }
+                              }`}
                             >
-                              {
-                                label
-                              }
+                              {label}
                             </span>
 
                             {active && (
                               <span
                                 className="
                                   size-1.5
+                                  shrink-0
                                   rounded-full
                                   bg-teal-300
                                   shadow-[0_0_10px_rgba(94,234,212,0.85)]
@@ -1006,14 +1093,16 @@ export function Navbar({
                           </span>
 
                           <ArrowUpRight
-                            size={23}
+                            size={18}
                             className="
                               relative
-                              text-white/20
+                              z-10
+                              shrink-0
+                              text-white/25
                               transition-all
                               duration-300
-                              group-hover/mobile:-translate-y-1
-                              group-hover/mobile:translate-x-1
+                              group-hover/mobile:-translate-y-0.5
+                              group-hover/mobile:translate-x-0.5
                               group-hover/mobile:text-teal-300
                             "
                           />
@@ -1024,11 +1113,13 @@ export function Navbar({
                 )}
               </nav>
 
-              {/* MOBILE FOOTER */}
+              {/* ===============================================
+                  MOBILE FOOTER
+              =============================================== */}
 
               <motion.div
                 initial={{
-                  y: 30,
+                  y: 20,
                   opacity: 0,
                 }}
                 animate={{
@@ -1036,131 +1127,165 @@ export function Navbar({
                   opacity: 1,
                 }}
                 transition={{
-                  delay: 0.5,
-                  duration: 0.5,
+                  delay: 0.35,
+                  duration: 0.4,
                 }}
                 className="
                   relative
-                  z-10
+                  z-20
+                  mt-5
+                  shrink-0
                   border-t
                   border-white/10
-                  pt-5
+                  pt-4
                 "
               >
-                {/* SOCIALS */}
+                {/* SOCIAL LINKS */}
+
+                {socials.length >
+                  0 && (
+                  <div
+                    className="
+                      mb-4
+                      flex
+                      flex-wrap
+                      gap-x-4
+                      gap-y-2
+                    "
+                  >
+                    {socials.map(
+                      (social) => (
+                        <Link
+                          key={
+                            social.id
+                          }
+                          href={
+                            social.url
+                          }
+                          target={
+                            social.url.startsWith(
+                              "http"
+                            )
+                              ? "_blank"
+                              : undefined
+                          }
+                          rel={
+                            social.url.startsWith(
+                              "http"
+                            )
+                              ? "noopener noreferrer"
+                              : undefined
+                          }
+                          className="
+                            group/social
+                            flex
+                            items-center
+                            gap-1
+                            text-xs
+                            text-white/40
+                            transition
+                            duration-300
+                            hover:text-white
+                          "
+                        >
+                          {
+                            social.platform
+                          }
+
+                          <ArrowUpRight
+                            size={10}
+                          />
+                        </Link>
+                      )
+                    )}
+                  </div>
+                )}
+
+                {/* MOBILE BUTTONS */}
 
                 <div
                   className="
-                    mb-5
-                    flex
-                    flex-wrap
-                    gap-x-5
-                    gap-y-3
+                    grid
+                    grid-cols-1
+                    gap-2.5
+
+                    min-[390px]:grid-cols-2
                   "
                 >
-                  {socials.map(
-                    (social) => (
-                      <Link
-                        key={
-                          social.id
-                        }
-                        href={
-                          social.url
-                        }
-                        target={
-                          social.url.startsWith(
-                            "http"
-                          )
-                            ? "_blank"
-                            : undefined
-                        }
-                        rel={
-                          social.url.startsWith(
-                            "http"
-                          )
-                            ? "noopener noreferrer"
-                            : undefined
-                        }
-                        className="
-                          group/social
-                          flex
-                          items-center
-                          gap-1
-                          text-sm
-                          text-white/40
-                          transition
-                          duration-300
-                          hover:text-white
-                        "
-                      >
-                        {
-                          social.platform
-                        }
+                  {/* RESUME */}
 
-                        <ArrowUpRight
-                          size={11}
-                          className="
-                            opacity-0
-                            transition
-                            group-hover/social:opacity-100
-                          "
-                        />
-                      </Link>
-                    )
-                  )}
-                </div>
-
-                {/* MOBILE PROJECT BUTTON */}
-
-                <MagneticLink
-                  href="/#contact"
-                  className="
-                    group/project
-                    relative
-                    w-full
-                    justify-center
-                    overflow-hidden
-                    rounded-2xl
-                    border
-                    border-violet-300/20
-                    bg-gradient-to-r
-                    from-violet-600
-                    to-violet-500
-                    py-3.5
-                    font-semibold
-                    text-white
-                    shadow-[0_12px_40px_rgba(124,58,237,0.20)]
-                  "
-                  cursor="TALK"
-                >
-                  <span
+                  <Link
+                    href={
+                      settings.resumeUrl ||
+                      "/#contact"
+                    }
+                    onClick={() =>
+                      setOpen(false)
+                    }
                     className="
-                      absolute
-                      inset-0
-                      bg-gradient-to-r
-                      from-white/10
-                      via-transparent
-                      to-teal-300/10
-                      opacity-0
+                      flex
+                      min-h-[46px]
+                      items-center
+                      justify-center
+                      gap-2
+                      rounded-xl
+                      border
+                      border-white/10
+                      bg-white/[0.05]
+                      px-4
+                      text-sm
+                      font-medium
+                      text-white/75
                       transition
-                      group-hover/project:opacity-100
+
+                      hover:border-white/20
+                      hover:bg-white/[0.09]
+                      hover:text-white
                     "
-                  />
+                  >
+                    <ArrowDownToLine
+                      size={15}
+                    />
 
-                  <span className="relative">
-                    Start a project
-                  </span>
+                    Resume
+                  </Link>
 
-                  <ArrowUpRight
-                    size={17}
+                  {/* CONTACT */}
+
+                  <Link
+                    href="/#contact"
+                    onClick={() =>
+                      setOpen(false)
+                    }
                     className="
-                      relative
-                      transition-transform
-                      group-hover/project:-translate-y-0.5
-                      group-hover/project:translate-x-0.5
+                      flex
+                      min-h-[46px]
+                      items-center
+                      justify-center
+                      gap-2
+                      rounded-xl
+                      border
+                      border-violet-300/20
+                      bg-gradient-to-r
+                      from-violet-600
+                      to-violet-500
+                      px-4
+                      text-sm
+                      font-semibold
+                      text-white
+                      shadow-[0_10px_30px_rgba(124,58,237,0.20)]
+                      transition
+
+                      hover:shadow-[0_14px_40px_rgba(124,58,237,0.30)]
                     "
-                  />
-                </MagneticLink>
+                  >
+                    Let&apos;s talk
+
+                    <ArrowUpRight
+                      size={15}
+                    />
+                  </Link>
+                </div>
               </motion.div>
             </motion.aside>
           </motion.div>
